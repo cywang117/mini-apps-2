@@ -1,0 +1,15 @@
+{
+  "include": [
+    "challenge_?/**/*.ts",
+    "challenge_?/**/*.tsx",
+  ],
+  "exclude": ["node_modules"],
+  "compilerOptions": {
+    "module": "commonjs",
+    "target": "ES6",
+    "lib": ["es6", "dom", "es7"],
+    "jsx": "react",
+    "declaration": true,
+    "strict": true
+  }
+}
