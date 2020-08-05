@@ -5,8 +5,7 @@
   "author": "Christina Wang",
   "license": "MIT",
   "scripts": {
-    "dev:1": "concurrently \"json-server --watch challenge_1/data/db.json\" \"webpack-dev-server --config challenge_1/webpack.config.js\"",
-    "css:1": "tcm challenge_1/client"
+    "dev:1": "concurrently \"json-server --watch challenge_1/data/db.json\" \"webpack-dev-server --config challenge_1/webpack.config.js\""
   },
   "devDependencies": {
     "@types/react": "^16.9.44",

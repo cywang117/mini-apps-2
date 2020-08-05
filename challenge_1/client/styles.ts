@@ -104,4 +104,19 @@ export const EventDesc = styled.p`
   padding-left: 10px;
 `;
 
+export const SearchCtn = styled.div`
+  margin: 0 auto;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  & input {
+    padding: 5px;
+    margin: 0 10px;
+  }
+  & button {
+    padding: 5px;
+  }
+`;
+
 
