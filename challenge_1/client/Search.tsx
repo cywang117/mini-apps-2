@@ -8,21 +8,18 @@ interface Props {
   resetSearch: () => void;
 }
 
-const Search:FC<Props> = ({ searchPhrase, handleSearchChange, resetSearch }) => {
-
-  return (
-    <SearchCtn>
-      <label htmlFor="search">Find an event: </label>
-      <input
-        type="text"
-        id="search"
-        autoComplete="off"
-        value={searchPhrase}
-        onChange={handleSearchChange}
-        onFocus={resetSearch}
-      />
-    </SearchCtn>
-  );
-}
+const Search:FC<Props> = ({ searchPhrase, handleSearchChange, resetSearch }) => (
+  <SearchCtn>
+    <label htmlFor="search">Find an event: </label>
+    <input
+      type="text"
+      id="search"
+      autoComplete="off"
+      value={searchPhrase}
+      onChange={handleSearchChange}
+      onFocus={resetSearch}
+    />
+  </SearchCtn>
+);
 
 export default Search;

@@ -118,5 +118,3 @@ export const SearchCtn = styled.div`
     padding: 5px;
   }
 `;
-
-
