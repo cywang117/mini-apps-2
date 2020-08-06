@@ -2,6 +2,6 @@
   "extends": "../tsconfig.json",
   "compilerOptions": {
     "outDir": "public",
-    "types": ["react", "react-dom", "styled-components"]
+    "types": ["react", "react-dom", "styled-components", "chart.js"]
   }
 }
