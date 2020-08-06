@@ -2,7 +2,6 @@
   "extends": "../tsconfig.json",
   "compilerOptions": {
     "outDir": "public",
-    "rootDir": "./",
     "types": ["react", "react-dom", "styled-components", "react-paginate"]
   }
 }
