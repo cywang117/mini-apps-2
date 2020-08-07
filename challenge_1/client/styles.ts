@@ -81,19 +81,26 @@ export const Title = styled.h1`
   margin-bottom: 10px;
   text-align: center;
   padding: 50px 0 20px 0;
-  border-bottom: 1px solid black;
 `;
 
-export const ErrorMessage = styled.div`
-  margin: 15px auto 0;
+export const HelpMsg = styled.div`
+  margin: 0 auto;
+  text-align: center;
+  font-size: 12px;
+  padding-top: 10px;
+`;
+
+export const StatusMsg = styled.div<{error:boolean}>`
+  margin: 0 auto;
   text-align: center;
   font-size: 10px;
-  color: red;
+  color: ${props => props.error ? 'red' : 'green'};
+  padding-top: 15px;
+  padding-bottom: 10px;
+  box-sizing: border-box;
+  height: 20px;
 `;
 
-/**
- * CHALLENGE 2
- */
 export const EventsCtn = styled.div`
   box-sizing: border-box;
   padding: 20px 30px;
@@ -106,12 +113,29 @@ export const Event = styled.section`
   padding: 10px 0;
 `;
 
+export const EventHeaderCtn = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  padding-bottom: 10px;
+  align-items: center;
+`;
+
 export const EventYear = styled.p`
   font-weight: bold;
 `;
 
-export const EventDesc = styled.p`
-  padding-left: 10px;
+export const EventDesc = styled.div`
+  margin-left: 10px;
+  width: 100%;
+  font-family: inherit;
+  font-size: inherit;
+  outline: none;
+  padding: 5px;
+  border-radius: 5px;
+  :focus {
+    background: white;
+  }
 `;
 
 export const SearchCtn = styled.div`

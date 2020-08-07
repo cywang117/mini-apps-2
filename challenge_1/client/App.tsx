@@ -1,9 +1,10 @@
 import * as React from 'react';
 import { useState, useEffect, useRef, useCallback, FC } from 'react';
 import ReactPaginate from 'react-paginate';
-import { GlobalStyle, Title, ErrorMessage } from './styles';
+import { GlobalStyle, Title, HelpMsg, StatusMsg } from './styles';
 import { debounce } from './utils';
 import EventList, { EventDef } from './EventList';
+import { UpdateEventFn } from './SingleEvent';
 import Search from './Search';
 
 /**
@@ -15,12 +16,12 @@ const App:FC = () => {
   const [pageNum, setPageNum] = useState<number>(1);
   const [searchPhrase, setSearchPhrase] = useState<string>('');
   const [isSearching, setIsSearching] = useState<boolean>(false);
-  const [errorMsg, setErrorMsg] = useState<string>('');
+  const [message, setMessage] = useState<{message:string, error:boolean}>({ message: '', error: false });
 
   const isInitialMount = useRef<boolean>(true);
 
-  const defaultErrorMsg = 'Oops! Something went wrong. Try refreshing the page.';
-  const invalidSearchMsg = 'No events found for search phrase. Try again.';
+  const defaultErrorMsg:string = 'Oops! Something went wrong. Try refreshing the page.';
+  const invalidSearchMsg:string = 'No events found for search phrase. Try again.';
 
   /**
    * Get the total number of events that fit an optional search phrase query
@@ -46,7 +47,7 @@ const App:FC = () => {
     return fetch(endpoint)
       .then((res) => res.json())
       .then((data) => {
-        setErrorMsg('');
+        setMessage({ message: '', error: false });
         setEvents(data);
       });
   }
@@ -56,10 +57,10 @@ const App:FC = () => {
    */
   const fetchEventPage = () => {
     let endpoint = `/events?_page=${pageNum}${(searchPhrase && `&q=${searchPhrase}`) || ''}`;
-    fetchEvents(endpoint)
+    return fetchEvents(endpoint)
       .catch((err) => {
         console.error(err);
-        setErrorMsg(defaultErrorMsg);
+        setMessage({ message: defaultErrorMsg, error: true });
         setEvents([]);
       });
   }
@@ -82,9 +83,9 @@ const App:FC = () => {
       .catch(err => {
         console.error(err);
         if (err.message === invalidSearchMsg) {
-          setErrorMsg(invalidSearchMsg);
+          setMessage({ message: invalidSearchMsg, error: true });
         } else {
-          setErrorMsg(defaultErrorMsg);
+          setMessage({ message: defaultErrorMsg, error: true });
         }
         setIsSearching(false);
         setEvents([]);
@@ -116,6 +117,33 @@ const App:FC = () => {
   }
 
   /**
+   * @param {String} dateStr: date string of target event to be updated
+   * @param {String} descStr: description string, used in place of unique id in conjunction with dateStr
+   * @param {Object} updatedEvent: object containing updated date and description
+   * @returns {Promise}
+   */
+  const updateEvent:UpdateEventFn = (eventId, updatedEvent) => {
+    return fetch(`/events/${eventId}`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        description: updatedEvent.desc,
+        date: updatedEvent.date,
+      }),
+    })
+      .then(() => fetchEventPage())
+      .then(() => {
+        setMessage({ message: 'Event updated successfully', error: false });
+        setTimeout(() => setMessage({ message: '', error: false}), 3000);
+      })
+      .catch(err => {
+        console.error(err);
+      })
+  }
+
+  /**
    * On initial app render, get total event count, then fetch first page.
    */
   useEffect(() => {
@@ -123,7 +151,7 @@ const App:FC = () => {
       .then(() => fetchEventPage())
       .catch(err => {
         console.error(err);
-        setErrorMsg(defaultErrorMsg);
+        setMessage({ message: defaultErrorMsg, error: true });
       });
   }, []);
 
@@ -156,10 +184,11 @@ const App:FC = () => {
         searchPhrase={searchPhrase}
         handleSearchChange={handleSearchChange}
         resetSearch={() => setSearchPhrase('')}
-      />
-      <ErrorMessage>{errorMsg}</ErrorMessage>
+        />
+      <HelpMsg>Click an event's date or description to edit it.</HelpMsg>
+      <StatusMsg error={message.error}>{message.message}</StatusMsg>
       {
-        events.length ? (
+        events.length ?
           <React.Fragment>
             <ReactPaginate
               previousLabel={'Prev'}
@@ -175,9 +204,9 @@ const App:FC = () => {
               activeLinkClassName={'active'}
               pageLinkClassName={'page'}
             />
-            <EventList events={events} />
-          </React.Fragment>
-        ) : ''
+            <EventList events={events} updateEvent={updateEvent} />
+            </React.Fragment> :
+            ''
       }
     </React.Fragment>
   );

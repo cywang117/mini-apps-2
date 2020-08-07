@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { FC } from 'react';
-import { EventsCtn, Event, EventYear, EventDesc } from './styles';
+import { EventsCtn } from './styles';
+import SingleEvent, { UpdateEventFn } from './SingleEvent';
 
 /**
  * Counts of categories in all events:
@@ -21,23 +22,27 @@ export interface EventDef {
   lang: string;
   category1?: string;
   category2?: string;
+  id: number;
 }
 
 interface Props {
   events: Array<EventDef>;
+  updateEvent: UpdateEventFn;
 }
 
-const EventList:FC<Props> = ({ events }) => {
+const EventList:FC<Props> = ({ events, updateEvent }) => {
   return (
     <EventsCtn>
-      {
-        events.map((event, idx) => (
-          <Event key={idx}>
-            <EventYear>Date: {event.date}</EventYear>
-            <EventDesc>{event.description}</EventDesc>
-          </Event>
-        ))
-      }
+      {events.map((event, idx) => (
+        <SingleEvent
+          key={idx}
+          id={idx}
+          date={event.date}
+          desc={event.description}
+          eventId={event.id}
+          updateEvent={updateEvent}
+        />
+      ))}
     </EventsCtn>
   );
 }
