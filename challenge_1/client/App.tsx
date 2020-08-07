@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useState, useEffect, useRef, useCallback, FC } from 'react';
 import ReactPaginate from 'react-paginate';
-import { GlobalStyle, Title } from './styles';
+import { GlobalStyle, Title, ErrorMessage } from './styles';
 import { debounce } from './utils';
 import EventList, { EventDef } from './EventList';
 import Search from './Search';
@@ -15,8 +15,12 @@ const App:FC = () => {
   const [pageNum, setPageNum] = useState<number>(1);
   const [searchPhrase, setSearchPhrase] = useState<string>('');
   const [isSearching, setIsSearching] = useState<boolean>(false);
+  const [errorMsg, setErrorMsg] = useState<string>('');
 
-  const isInitialMount = useRef(true);
+  const isInitialMount = useRef<boolean>(true);
+
+  const defaultErrorMsg = 'Oops! Something went wrong. Try refreshing the page.';
+  const invalidSearchMsg = 'No events found for search phrase. Try again.';
 
   /**
    * Get the total number of events that fit an optional search phrase query
@@ -27,10 +31,10 @@ const App:FC = () => {
     let endpoint = `/events${(searchPhrase && `?q=${searchPhrase}`) || ''}`;
     return fetch(endpoint)
       .then((res) => res.json())
-      .then((data) => setNumEvents(data.length))
-      .catch((err) => {
-        console.error(err);
-      });
+      .then((data) => {
+        setNumEvents(data.length);
+        return data.length;
+      })
   }
 
   /**
@@ -42,11 +46,8 @@ const App:FC = () => {
     return fetch(endpoint)
       .then((res) => res.json())
       .then((data) => {
+        setErrorMsg('');
         setEvents(data);
-      })
-      .catch((err) => {
-        console.error(err);
-        setEvents([]);
       });
   }
 
@@ -55,7 +56,12 @@ const App:FC = () => {
    */
   const fetchEventPage = () => {
     let endpoint = `/events?_page=${pageNum}${(searchPhrase && `&q=${searchPhrase}`) || ''}`;
-    fetchEvents(endpoint);
+    fetchEvents(endpoint)
+      .catch((err) => {
+        console.error(err);
+        setErrorMsg(defaultErrorMsg);
+        setEvents([]);
+      });
   }
 
   /**
@@ -65,6 +71,9 @@ const App:FC = () => {
   const fetchEventQuery = (searchPhrase:string) => {
     setIsSearching(true);
     getEventCount(searchPhrase)
+      .then(numEvents => {
+        if (!numEvents) throw new Error(invalidSearchMsg);
+      })
       .then(() => fetchEvents(`/events?_page=1&q=${searchPhrase}`))
       .then(() => {
         setPageNum(1);
@@ -72,8 +81,14 @@ const App:FC = () => {
       })
       .catch(err => {
         console.error(err);
+        if (err.message === invalidSearchMsg) {
+          setErrorMsg(invalidSearchMsg);
+        } else {
+          setErrorMsg(defaultErrorMsg);
+        }
         setIsSearching(false);
-      })
+        setEvents([]);
+      });
   }
 
   /**
@@ -106,7 +121,10 @@ const App:FC = () => {
   useEffect(() => {
     getEventCount()
       .then(() => fetchEventPage())
-      .catch(console.error);
+      .catch(err => {
+        console.error(err);
+        setErrorMsg(defaultErrorMsg);
+      });
   }, []);
 
   /**
@@ -139,21 +157,28 @@ const App:FC = () => {
         handleSearchChange={handleSearchChange}
         resetSearch={() => setSearchPhrase('')}
       />
-      <ReactPaginate
-        previousLabel={'Prev'}
-        previousLinkClassName={'page-change-btn'}
-        nextLabel={'Next'}
-        nextLinkClassName={'page-change-btn'}
-        pageCount={Math.ceil(numEvents / 10)}
-        marginPagesDisplayed={2}
-        pageRangeDisplayed={3}
-        forcePage={pageNum - 1}
-        onPageChange={handlePageChange}
-        containerClassName={'paginate-ctn'}
-        activeLinkClassName={'active'}
-        pageLinkClassName={'page'}
-      />
-      <EventList events={events} />
+      <ErrorMessage>{errorMsg}</ErrorMessage>
+      {
+        events.length ? (
+          <React.Fragment>
+            <ReactPaginate
+              previousLabel={'Prev'}
+              previousLinkClassName={'page-change-btn'}
+              nextLabel={'Next'}
+              nextLinkClassName={'page-change-btn'}
+              pageCount={Math.ceil(numEvents / 10)}
+              marginPagesDisplayed={2}
+              pageRangeDisplayed={3}
+              forcePage={pageNum - 1}
+              onPageChange={handlePageChange}
+              containerClassName={'paginate-ctn'}
+              activeLinkClassName={'active'}
+              pageLinkClassName={'page'}
+            />
+            <EventList events={events} />
+          </React.Fragment>
+        ) : ''
+      }
     </React.Fragment>
   );
 }

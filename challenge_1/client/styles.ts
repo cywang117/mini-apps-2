@@ -1,7 +1,7 @@
 import styled, { createGlobalStyle } from 'styled-components';
 
 /**
- * STYLES
+ * CHALLENGE 1
  */
 export const GlobalStyle = createGlobalStyle`
   /* CSS Reset */
@@ -31,7 +31,7 @@ export const GlobalStyle = createGlobalStyle`
     height: 30px;
     box-sizing: border-box;
     outline: none;
-    margin-top: 30px;
+    margin-top: 10px;
     font-size: 13px;
   }
   .break {
@@ -84,6 +84,16 @@ export const Title = styled.h1`
   border-bottom: 1px solid black;
 `;
 
+export const ErrorMessage = styled.div`
+  margin: 15px auto 0;
+  text-align: center;
+  font-size: 10px;
+  color: red;
+`;
+
+/**
+ * CHALLENGE 2
+ */
 export const EventsCtn = styled.div`
   box-sizing: border-box;
   padding: 20px 30px;

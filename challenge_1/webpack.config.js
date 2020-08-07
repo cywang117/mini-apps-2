@@ -28,6 +28,7 @@ module.exports = {
     hot: true,
     open: true
   },
+  devtool: 'eval-cheap-source-map',
   plugins: [
     new HtmlWebpackPlugin({
       template: path.resolve(__dirname, 'client', 'index.html')
