@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { FC } from 'react';
+import { FC, useEffect } from 'react';
 import { EventsCtn } from './styles';
 import SingleEvent, { UpdateEventFn } from './SingleEvent';
 
@@ -32,18 +32,25 @@ interface Props {
 
 const EventList:FC<Props> = ({ events, updateEvent }) => {
   return (
-    <EventsCtn>
-      {events.map((event, idx) => (
-        <SingleEvent
-          key={idx}
-          id={idx}
-          date={event.date}
-          desc={event.description}
-          eventId={event.id}
-          updateEvent={updateEvent}
-        />
-      ))}
-    </EventsCtn>
+    <React.Fragment>
+      { events.length ?
+          <EventsCtn>
+            {events.map((event, idx) => (
+              <SingleEvent
+                key={event.id}
+                id={idx}
+                date={event.date}
+                desc={event.description}
+                eventId={event.id}
+                updateEvent={updateEvent}
+              />
+            ))}
+          </EventsCtn> :
+          ''
+      }
+
+    </React.Fragment>
+
   );
 }
 

@@ -121,8 +121,17 @@ export const EventHeaderCtn = styled.div`
   align-items: center;
 `;
 
-export const EventYear = styled.p`
+export const EventYear = styled.div`
   font-weight: bold;
+  & div {
+    display: inline-block;
+    outline: none;
+    padding: 5px;
+    border-radius: 5px;
+    :focus {
+      background: white;
+    }
+  }
 `;
 
 export const EventDesc = styled.div`

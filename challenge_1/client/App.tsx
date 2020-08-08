@@ -56,7 +56,7 @@ const App:FC = () => {
    * Fetch a new page of events with optional search query. Called when page number changes in any way (except when searching)
    */
   const fetchEventPage = () => {
-    let endpoint = `/events?_page=${pageNum}${(searchPhrase && `&q=${searchPhrase}`) || ''}`;
+    let endpoint = `/events?_page=${pageNum}${searchPhrase ? `&q=${searchPhrase}` : ''}`;
     return fetchEvents(endpoint)
       .catch((err) => {
         console.error(err);
@@ -75,7 +75,7 @@ const App:FC = () => {
       .then(numEvents => {
         if (!numEvents) throw new Error(invalidSearchMsg);
       })
-      .then(() => fetchEvents(`/events?_page=1&q=${searchPhrase}`))
+      .then(() => fetchEvents(`/events?_page=1${searchPhrase ? `&q=${searchPhrase}` : ''}`))
       .then(() => {
         setPageNum(1);
         setIsSearching(false);
@@ -189,25 +189,23 @@ const App:FC = () => {
       <StatusMsg error={message.error}>{message.message}</StatusMsg>
       {
         events.length ?
-          <React.Fragment>
-            <ReactPaginate
-              previousLabel={'Prev'}
-              previousLinkClassName={'page-change-btn'}
-              nextLabel={'Next'}
-              nextLinkClassName={'page-change-btn'}
-              pageCount={Math.ceil(numEvents / 10)}
-              marginPagesDisplayed={2}
-              pageRangeDisplayed={3}
-              forcePage={pageNum - 1}
-              onPageChange={handlePageChange}
-              containerClassName={'paginate-ctn'}
-              activeLinkClassName={'active'}
-              pageLinkClassName={'page'}
-            />
-            <EventList events={events} updateEvent={updateEvent} />
-            </React.Fragment> :
-            ''
+          <ReactPaginate
+            previousLabel={'Prev'}
+            previousLinkClassName={'page-change-btn'}
+            nextLabel={'Next'}
+            nextLinkClassName={'page-change-btn'}
+            pageCount={Math.ceil(numEvents / 10)}
+            marginPagesDisplayed={2}
+            pageRangeDisplayed={3}
+            forcePage={pageNum - 1}
+            onPageChange={handlePageChange}
+            containerClassName={'paginate-ctn'}
+            activeLinkClassName={'active'}
+            pageLinkClassName={'page'}
+          /> :
+          ''
       }
+      <EventList events={events} updateEvent={updateEvent} />
     </React.Fragment>
   );
 }

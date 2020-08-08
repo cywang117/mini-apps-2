@@ -22,8 +22,9 @@ const SingleEvent:FC<Props> = ({ id, date, desc, eventId, updateEvent }) => {
    * On focusing out of an editable field in event component, update state to reflect edits
    * @param {Event} e
    */
-  const handleEditBlur = (e:React.FocusEvent) => {
-    setEventDesc((e.target as HTMLDivElement).textContent || '');
+  const handleEditBlur = (e:React.FocusEvent, updatedField:string) => {
+    updatedField === 'date' && setEventDate((e.target as HTMLDivElement).textContent || '');
+    updatedField === 'desc' && setEventDesc((e.target as HTMLDivElement).textContent || '');
   }
 
   /**
@@ -48,12 +49,22 @@ const SingleEvent:FC<Props> = ({ id, date, desc, eventId, updateEvent }) => {
   return (
     <Event>
       <EventHeaderCtn>
-        <EventYear>Date: {eventDate}</EventYear>
+        <EventYear>
+          Date:
+          <div
+            contentEditable
+            suppressContentEditableWarning={true}
+            spellCheck="false"
+            onBlur={(e) => { handleEditBlur(e, 'date'); }}
+          >
+            {eventDate}
+          </div>
+        </EventYear>
       </EventHeaderCtn>
       <EventDesc
         contentEditable
         id={`event-desc-${id}`}
-        onBlur={handleEditBlur}
+        onBlur={(e) => { handleEditBlur(e, 'desc'); }}
         suppressContentEditableWarning={true}
         spellCheck="false"
       >
