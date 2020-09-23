@@ -65,7 +65,7 @@ const addMineIndicators = (minefield, minePositions) => {
 const setSquareStatuses = (minefield) => {
   for (let i = 0; i < minefield.length; i++) {
     for (let j = 0; j < minefield[i].length; j++) {
-      minefield[i][j] = { sq: minefield[i][j], status: 'hidden' };
+      minefield[i][j] = { value: minefield[i][j], status: 'hidden' };
     }
   }
 }

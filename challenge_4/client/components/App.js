@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { generateMinefield } from '../utils';
+import Minefield from './Minefield';
 
 /**
  * Defaults
@@ -8,41 +10,23 @@ const defaultFields = {
   medium: { rows: 16, cols: 16, mines: 40 },
   hard: { rows: 16, cols: 30, mines: 99 }
 };
-const mineValue = -1;
 
 const App = () => {
   const [diff, setDiff] = useState('easy');
   const [minefield, setMinefield] = useState([[]]);
-  const [numMines, setNumMines] = useState(defaultFields[diff].mines);
 
-  // Initialization methods
-  const addMines = () => {
-    console.log(numMines);
-  }
-
-  const addMineIndicators = () => {
-
-  }
-
-  const regenerateMinefield = ()
-
-  // On initial mount & whenever difficulty changes, regenerate minefield with values
+  // On initial mount & whenever difficulty changes, (re)generate minefield according to difficulty selected
   useEffect(() => {
-    console.log('changing minefield');
-    regenerateMinefield(defaultFields[diff]);
-    setMinefield(new Array(defaultFields[diff].rows).fill(new Array(defaultFields[diff].cols).fill(0)));
-    setNumMines(defaultFields[diff].mines);
-    addMines(defaultFields[diff].mines);
-    addMineIndicators();
+    let minefield = generateMinefield(defaultFields[diff].rows, defaultFields[diff].cols, defaultFields[diff].mines);
+    setMinefield(minefield);
   }, [diff]);
-
-  useEffect(() => {}, [minefield]);
 
   return (
     <div>
       <button onClick={() => setDiff('easy')}>Easy</button>
       <button onClick={() => setDiff('medium')}>Medium</button>
       <button onClick={() => setDiff('hard')}>Hard</button>
+      <Minefield minefield={minefield} />
     </div>
   );
 }
