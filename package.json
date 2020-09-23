@@ -7,14 +7,19 @@
   "scripts": {
     "dev:1": "concurrently \"json-server -p 3004 -w challenge_1/data/db.json\" \"webpack-dev-server --config challenge_1/webpack.config.js\"",
     "dev:2": "concurrently \"nodemon challenge_2/server.js\" \"webpack-dev-server --config challenge_2/webpack.config.js\"",
-    "dev:3": "concurrently \"nodemon challenge_3/server.js\" \"webpack-dev-server --config challenge_3/webpack.config.js\""
+    "dev:3": "concurrently \"nodemon challenge_3/server.js\" \"webpack-dev-server --config challenge_3/webpack.config.js\"",
+    "dev:4": "concurrently \"nodemon challenge_4/server.js\" \"webpack-dev-server --config challenge_4/webpack.config.js\""
   },
   "devDependencies": {
+    "@babel/core": "^7.11.6",
+    "@babel/preset-env": "^7.11.5",
+    "@babel/preset-react": "^7.10.4",
     "@types/chart.js": "^2.9.23",
     "@types/react": "^16.9.44",
     "@types/react-dom": "^16.9.8",
     "@types/react-paginate": "^6.2.1",
     "@types/styled-components": "^5.1.2",
+    "babel-loader": "^8.1.0",
     "concurrently": "^5.2.0",
     "html-webpack-plugin": "^4.3.0",
     "morgan": "^1.10.0",
@@ -32,6 +37,8 @@
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-paginate": "^6.3.2",
+    "react-redux": "^7.2.1",
+    "redux": "^4.0.5",
     "styled-components": "^5.1.1"
   }
 }
