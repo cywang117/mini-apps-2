@@ -13,7 +13,6 @@ export type ScoreDef = {
   frst: any;
   scnd: any;
   thrd?: any;
-  score: number;
 };
 
 /**
@@ -27,11 +26,11 @@ const startingRows:Rows = [
 ];
 const startingScore = {
   frst: null,
-  scnd: null,
-  score: null
+  scnd: null
 };
 const startingScores:ScoreDef[] = new Array(10).fill({...startingScore});
 startingScores[9].thrd = null;
+const startingTotals = new Array(10).fill(null);
 const startingPins = 10;
 
 /**
@@ -49,6 +48,7 @@ export interface HandlePinChange {
 const Game:FC<Props> = ({ handlePageChange }) => {
   const [rows, setRows] = useState<Rows>(startingRows);
   const [roundScores, setRoundScores] = useState<ScoreDef[]>(startingScores);
+  const [totalScores, setTotalScores] = useState<any[]>(startingTotals);
   const [numPins, setNumPins] = useState<number>(startingPins);
   // 10 rounds total per game, each round having 2 rolls. Recorded here as 0-indexed
   const [round, setRound] = useState<number>(0);
@@ -118,12 +118,13 @@ const Game:FC<Props> = ({ handlePageChange }) => {
     if (roll === 0) {
       // Strike
       if (removedCount === 10) {
-        scoresCopy[round].frst = null;
-        scoresCopy[round].scnd = 'X';
         // Get a third roll if strike in last round
         if (round === 9) {
-          setRoll(2);
+          scoresCopy[round].frst = 'X';
+          setRoll(1);
         } else {
+          scoresCopy[round].frst = null;
+          scoresCopy[round].scnd = 'X';
           setRound(round + 1);
           setRoll(0);
         }
@@ -134,15 +135,21 @@ const Game:FC<Props> = ({ handlePageChange }) => {
       }
     } else if (roll === 1) {
       // Second roll of round
-      // Spare
       if (pinString === '0000000000') {
-        // Get a third roll if spare in last round
-        scoresCopy[round].scnd = '/';
-        if (round === 9) {
+        // Strike - only happens in last round
+        if (removedCount === 10) {
+          scoresCopy[round].scnd = 'X';
           setRoll(2);
         } else {
-          setRound(round + 1);
-          setRoll(0);
+          // Spare
+          scoresCopy[round].scnd = '/';
+          // Get a third roll if spare in last round
+          if (round === 9) {
+            setRoll(2);
+          } else {
+            setRound(round + 1);
+            setRoll(0);
+          }
         }
         setRows(startingRows);
       } else {
@@ -162,7 +169,10 @@ const Game:FC<Props> = ({ handlePageChange }) => {
     }
 
     setRoundScores(scoresCopy);
+    // TODO: update total scores
   }
+
+  React.useEffect(() => {console.log(roundScores);}, [roundScores]);
 
   /**
    * Removes numPin amount of pins from rows, then adds removed pins to score
@@ -172,7 +182,7 @@ const Game:FC<Props> = ({ handlePageChange }) => {
     if (gameOver) return;
 
     let results = removePins(numPins);
-    updateScore((results as any).removedCount, (results as any).pinString);
+    updateScore((results as any)[0], (results as any)[1]);
 
   }
 
