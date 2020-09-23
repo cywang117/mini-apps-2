@@ -6,7 +6,8 @@
   "license": "MIT",
   "scripts": {
     "dev:1": "concurrently \"json-server -p 3004 -w challenge_1/data/db.json\" \"webpack-dev-server --config challenge_1/webpack.config.js\"",
-    "dev:2": "concurrently \"nodemon challenge_2/server.js\" \"webpack-dev-server --config challenge_2/webpack.config.js\""
+    "dev:2": "concurrently \"nodemon challenge_2/server.js\" \"webpack-dev-server --config challenge_2/webpack.config.js\"",
+    "dev:3": "concurrently \"nodemon challenge_3/server.js\" \"webpack-dev-server --config challenge_3/webpack.config.js\""
   },
   "devDependencies": {
     "@types/chart.js": "^2.9.23",
